@@ -1,17 +1,19 @@
 open System
 
-let maybeParse i =
+let parsed i =
     match Int32.TryParse i with
     | (true , v) -> Some v
     | (false, _) -> None
-    
-let maybeTimes = Console.ReadLine() |> maybeParse 
 
-match maybeTimes with
-| None -> 
-    printfn "Invalid input"; exit 1
-| Some times when times < 0 || times > 50 ->
-    printfn "Invalid input"; exit 1
-| Some times -> 
-    [1..times] |> Seq.iter (fun _ -> printfn "Hello World")
-    exit 0
+let (|ValidInput|_|) = function
+    | Some v when v >= 0 && v <= 50 -> Some v
+    | _ -> None
+
+let greet _ = printfn "Hello World"
+
+Console.ReadLine() 
+    |> parsed 
+    |> function
+        | ValidInput times -> [1..times] |> List.iter greet; 0
+        | _ -> printfn "Invalid input"; 1
+    |> exit
