@@ -4,12 +4,11 @@ let parsed i =
     | (true , v) -> Some v
     | (false, _) -> None
 
-let (|EOF|_|) (r:IO.TextReader) = if r.Peek() = -1 then Some EOF else None
-
+let (|Line|_|) (r:IO.TextReader) = if r.Peek() = -1 then None else Some (r.ReadLine())
 let rec readLines (reader:IO.TextReader) (lines: string list) : string list = 
     match reader with
-    | EOF -> lines
-    | _ -> readLines reader (lines @ [reader.ReadLine()])
+    | Line l -> readLines reader (lines @ [l])
+    | _ -> lines
 
 let input = Console.OpenStandardInput()
 
